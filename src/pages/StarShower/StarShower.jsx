@@ -55,7 +55,7 @@ export default function StarShower() {
   useEventListener({ eventType: 'resize', fnToRun: hideAndThenShowCanvas });
 
   return (
-    <div className='relative size-full' ref={canvasWrapperRef}>
+    <div className='size-full' ref={canvasWrapperRef}>
       <div className='absolute left-0 top-0 flex gap-x-2 p-2'>
         <button
           type='button'
@@ -75,7 +75,7 @@ export default function StarShower() {
       </div>
 
       {isCanvasVisible && (
-        <>
+        <div className='relative'>
           <canvas
             className='absolute left-0 top-0'
             ref={bgCanvasRef}
@@ -90,7 +90,7 @@ export default function StarShower() {
             height={canvasSize.current?.height}
             style={canvasSize.current}
           />
-        </>
+        </div>
       )}
     </div>
   );

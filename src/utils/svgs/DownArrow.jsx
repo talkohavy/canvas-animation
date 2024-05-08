@@ -1,4 +1,4 @@
-export default function DownArrow({ title = 'arrow icon', className = undefined }) {
+export default function DownArrow({ title = '', className = undefined }) {
   return (
     <svg stroke='currentColor' strokeWidth='12' viewBox='0 0 100 100' className={className}>
       <title>{title}</title>

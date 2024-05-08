@@ -16,7 +16,7 @@ export default function Sidebar() {
       <button
         type='button'
         onClick={() => setIsSidebarOpen((prev) => !prev)}
-        className='absolute right-0 top-1/2 size-8 translate-x-1/2 rounded-full bg-blue-400 p-2 opacity-20 hover:opacity-100'
+        className='absolute right-0 top-1/2 z-10 size-8 translate-x-1/2 rounded-full bg-blue-400 p-2 opacity-20 hover:opacity-100'
       >
         <DownArrow className={clsx('stroke-black', isSidebarOpen ? 'rotate-90' : 'rotate-270')} />
       </button>
