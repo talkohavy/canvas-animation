@@ -1,0 +1,42 @@
+.likeBody {
+  background-image: none;
+  background-color: white;
+}
+
+.mainCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  touch-action: none;
+  background-color: transparent;
+  z-index: 1;
+  opacity: 1;
+}
+
+.bgCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  touch-action: none;
+  background-color: black;
+  z-index: 0;
+  opacity: 1;
+}
+
+.chartCanvas {
+  touch-action: none;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.chartCanvasWrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 0.9;
+  width: 80%;
+  height: auto;
+  background-color: transparent;
+}

@@ -4,17 +4,42 @@ import SideBarLinkItem from './SideBarLinkItem';
 
 const routesRaw = [
   {
-    to: '/',
+    path: '/',
     text: 'Home',
     activeNames: ['/home', '/'],
   },
   {
-    to: '/redux',
-    text: 'Redux Example',
-    activeNames: ['/redux'],
+    path: '/bubbles',
+    text: 'Bubbles',
+    activeNames: ['/bubbles'],
   },
   {
-    to: '/some-url',
+    path: '/fireworks',
+    text: 'Fireworks',
+    activeNames: ['/fireworks'],
+  },
+  {
+    path: '/magic-wand',
+    text: 'Magic Wand',
+    activeNames: ['/magic-wand'],
+  },
+  {
+    path: '/ms-paint',
+    text: 'Ms Paint',
+    activeNames: ['/ms-paint'],
+  },
+  {
+    path: '/star-shower',
+    text: 'Star Shower',
+    activeNames: ['/star-shower'],
+  },
+  {
+    path: '/particles',
+    text: 'Particles',
+    activeNames: ['/particles'],
+  },
+  {
+    path: '/some-url',
     text: 'Not Found Page',
     activeNames: ['/some-url'],
   },
@@ -25,8 +50,8 @@ export default function SideBarLinkList() {
 
   const routes = useMemo(
     () =>
-      routesRaw.map(({ to, text, activeNames }) => ({
-        to,
+      routesRaw.map(({ path, text, activeNames }) => ({
+        path,
         text,
         isActive: activeNames.some((name) => name === pathname),
       })),
@@ -35,8 +60,8 @@ export default function SideBarLinkList() {
 
   return (
     <div className='flex animate-appear flex-col items-start justify-start text-sm font-thin'>
-      {routes.map(({ to, text, isActive }) => (
-        <SideBarLinkItem key={text} to={to} text={text} isActive={isActive} />
+      {routes.map(({ path, text, isActive }) => (
+        <SideBarLinkItem key={text} to={path} text={text} isActive={isActive} />
       ))}
     </div>
   );
