@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export default function MsPaint() {
   // all useRefs:
+  const canvasWrapperRef = useRef(null); // the canvas will get its width from this element! it can't be done any other way.
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
   // all useStates:
+  const [isCanvasVisible, setIsCanvasVisible] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
 
   // all useEffects:
@@ -40,32 +42,26 @@ export default function MsPaint() {
     if (!isDrawing) return;
 
     const { offsetX, offsetY } = nativeEvent;
+
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
   };
 
-  // const [mainSize, setMainSize] = useState(false);
-
-  // useEffect(() => {
-  //   const debouncedHandleResize = wrapInDebounce(function handleResize() {
-  //     const rect = canvasRef.current.getBoundingClientRect();
-  //     setMainSize({ width: rect.width, height: rect.height });
-  //   }, 300);
-  //   if (!mainSize) {
-  //     const rect = canvasRef.current.getBoundingClientRect();
-  //     setMainSize({ width: rect.width, height: rect.height });
-  //   }
-  //   window.addEventListener('resize', debouncedHandleResize);
-  //   return () => window.removeEventListener('resize', debouncedHandleResize);
-  // }, [mainSize]);
-
   return (
-    <canvas
-      // style={{ width: mainSize?.width, height: mainSize?.height }}
-      onMouseDown={startDrawing}
-      onMouseUp={finishDrawing}
-      onMouseMove={draw}
-      ref={canvasRef}
-    />
+    <div className='size-full' ref={canvasWrapperRef}>
+      <div className='absolute left-0 top-0 flex gap-x-2 p-2'>
+        <button
+          type='button'
+          onClick={() => setIsCanvasVisible(!isCanvasVisible)}
+          className='z-50 h-10 rounded-lg border border-black bg-red-300 px-1 text-white hover:rounded-xl hover:bg-red-500 active:bg-red-600'
+        >
+          {isCanvasVisible ? 'Hide Canvas' : 'Show canvas'}
+        </button>
+      </div>
+
+      {isCanvasVisible && (
+        <canvas onMouseDown={startDrawing} onMouseUp={finishDrawing} onMouseMove={draw} ref={canvasRef} />
+      )}
+    </div>
   );
 }
