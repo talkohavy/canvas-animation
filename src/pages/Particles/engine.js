@@ -251,8 +251,8 @@ export function engine(mainCanvas, mainSize) {
   // Event 1: Mouse Move
   // -------------------
   window.addEventListener('mousemove', (e) => {
-    mouse.px = e.clientX; // - outerElement.offsetLeft - canvasContainerElement.offsetLeft
-    mouse.py = e.clientY - 80; // - outerElement.offsetTop - canvasContainerElement.offsetTop
+    mouse.px = e.offsetX;
+    mouse.py = e.offsetY;
   });
 
   // -------------------
@@ -303,13 +303,6 @@ export function engine(mainCanvas, mainSize) {
   });
 
   // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // --------     Phase 5: Implementation     ----------
-  // --------     Phase 5: Implementation     ----------
   // --------     Phase 5: Implementation     ----------
 
   for (let i = numOfParticles - 1; i + 1; i--) {
@@ -330,13 +323,6 @@ export function engine(mainCanvas, mainSize) {
   }
 
   // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // -----     Phase 6: Start Animation Loop     -------
-  // -----     Phase 6: Start Animation Loop     -------
   // -----     Phase 6: Start Animation Loop     -------
   function animate() {
     // Step 1: Clear Drawing Board / Draw Background
