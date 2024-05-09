@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { wrapInDebounce, wrapInThrottle } from '@talkohavy/lodash';
 import useEventListener from '../../hooks/useEventListener';
-import { engine } from './engine';
+import { engine } from './logic/engine';
 
 export default function StarShower() {
   // all useRefs:
