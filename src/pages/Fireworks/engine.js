@@ -1,13 +1,7 @@
 export function engine(mainCanvas, mainSize) {
   // 111111111111111111111111111111111111111111111111111
-  // 111111111111111111111111111111111111111111111111111
-  // 111111111111111111111111111111111111111111111111111
-  // 111111111111111111111111111111111111111111111111111
-  // 111111111111111111111111111111111111111111111111111
-  // 111111111111111111111111111111111111111111111111111
   // -----  Phase 1: Declaring Global Parameters  ------
-  // -----  Phase 1: Declaring Global Parameters  ------
-  // -----  Phase 1: Declaring Global Parameters  ------
+
   const c = mainCanvas.getContext('2d');
   mainCanvas.height = mainSize.height;
   mainCanvas.width = mainSize.width;
@@ -37,13 +31,6 @@ export function engine(mainCanvas, mainSize) {
   const twoPie = 2 * Math.PI;
 
   // 222222222222222222222222222222222222222222222222222
-  // 222222222222222222222222222222222222222222222222222
-  // 222222222222222222222222222222222222222222222222222
-  // 222222222222222222222222222222222222222222222222222
-  // 222222222222222222222222222222222222222222222222222
-  // 222222222222222222222222222222222222222222222222222
-  // -------    Phase 2: Declaring Objects    ----------
-  // -------    Phase 2: Declaring Objects    ----------
   // -------    Phase 2: Declaring Objects    ----------
   function Channel(audio_uri) {
     this.audio_uri = audio_uri;
@@ -96,473 +83,11 @@ export function engine(mainCanvas, mainSize) {
   //   }
   // }
   // sound = new GameSound();
-  class MyNode {
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // ------- Class Variables ---------
-    // ------- Class Variables ---------
-    // No need I guess?
 
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // --------- Constructor -----------
-    // --------- Constructor -----------
-    constructor(entity) {
-      this.entity = entity;
-      this.prevNode = null;
-      this.nextNode = null;
-    }
-    // --------
-    // Method 1: Get Entity
-    // --------
-    GetEntity() {
-      return this.entity;
-    }
-    // --------
-    // Method 2: Set Entity
-    // --------
-    SetEntity(entity) {
-      this.entity = entity;
-    }
-    // --------
-    // Method 3: Get Prev
-    // --------
-    GetPrev() {
-      return this.prevNode;
-    }
-    // --------
-    // Method 4: Set Prev
-    // --------
-    SetPrev(prevNode) {
-      this.prevNode = prevNode;
-    }
-    // --------
-    // Method 5: Get Next
-    // --------
-    GetNext() {
-      return this.nextNode;
-    }
-    // --------
-    // Method 6: Set Next
-    // --------
-    SetNext(nextNode) {
-      this.nextNode = nextNode;
-    }
-    // --------
-    // Method 7: to String
-    // --------
-    ToString() {
-      return `${this.entity.ToString()}`;
-    }
-  }
-  class MyList {
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // ------- Class Variables ---------
-    // ------- Class Variables ---------
-    // No need I guess?
+  const cannonBallArr = [];
+  const fireworksArr = [];
 
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // --------- Constructor -----------
-    // --------- Constructor -----------
-    constructor() {
-      this.first = null;
-      this.last = null;
-      this.size = 0;
-    }
-
-    // 33333333333333333333333333333333333333333
-    // 33333333333333333333333333333333333333333
-    // 33333333333333333333333333333333333333333
-    // 33333333333333333333333333333333333333333
-    // --------------- Methods -----------------
-    // --------------- Methods -----------------
-    // --------------- Methods -----------------
-
-    // ------------------
-    // Method 1: Get Head
-    // ------------------
-    GetFirst() {
-      return this.first;
-    }
-    // ------------------
-    // Method 2: Get Tail
-    // ------------------
-    GetLast() {
-      return this.last;
-    }
-    // ---------------------
-    // Method 3: Set as Head
-    // ---------------------
-    SetFirst(node) {
-      this.first = node;
-    }
-    // ---------------------
-    // Method 4: Set as Tail
-    // ---------------------
-    SetLast(node) {
-      this.last = node;
-    }
-    // ------------------------
-    // Method 5: Pull from Head
-    // ------------------------
-    Deque() {
-      if (this.size > 1) {
-        this.first = this.first.GetNext();
-        this.first.SetPrev(null);
-      } else {
-        this.first = null;
-        this.last = null;
-      }
-      this.size = this.size - 1;
-    }
-    // ------------------------
-    // Method 6: Pull from Tail
-    // ------------------------
-    DequeLast() {
-      this.last = this.last.GetPrev();
-      if (this.last === null) {
-        this.first = null;
-      } else {
-        this.last.SetNext(null);
-      }
-      this.size = this.size - 1;
-    }
-    // ----------------------
-    // Method 7: Push to Tail
-    // ----------------------
-    Enque(entity) {
-      const toBeInserted = new MyNode(entity);
-      if (this.size > 0) {
-        toBeInserted.SetPrev(this.last);
-        toBeInserted.SetNext(null);
-        this.last.SetNext(toBeInserted);
-        this.last = toBeInserted;
-      } else {
-        this.first = toBeInserted;
-        this.last = toBeInserted;
-        this.last.SetNext(null);
-        this.first.SetPrev(null);
-      }
-      this.size = this.size + 1;
-    }
-    // ---------------------
-    // Method 8: Smart Enque
-    // ---------------------
-    SmartEnque(entity) {
-      // Note: This algorithm is starting from } to beginning.
-      const toBeInserted = new MyNode(entity);
-      let iNod = this.last;
-      let isInserted = false;
-      // Step 1: Search insert position (n-1 places).
-      for (let i = 0; i < this.size; i++) {
-        // is this the one?
-        if (entity.data >= iNod.GetEntity().data) {
-          // Yes! Set 4 pointers.
-          toBeInserted.SetPrev(iNod);
-          toBeInserted.SetNext(iNod.GetNext());
-          iNod.SetNext(toBeInserted);
-          // is position last?
-          if (toBeInserted.GetNext() === null) {
-            // Yes! toBeInserted is now last.
-            this.last = toBeInserted;
-          } else {
-            // No! can do SetNext to prev.
-            toBeInserted.GetNext().SetPrev(toBeInserted);
-          }
-          isInserted = true;
-          break;
-        }
-        iNod = iNod.GetPrev();
-      }
-      if (!isInserted) {
-        // Meaning: entity.data < this.first.GetEntity.data
-        toBeInserted.SetPrev(null);
-        toBeInserted.SetNext(this.first);
-        // was list empty before insertion?
-        if (this.first === null) {
-          // Yes! Update this.last
-          this.last = toBeInserted;
-        } else {
-          // No! you can setPrev.
-          this.first.SetPrev(toBeInserted);
-        }
-        this.first = toBeInserted;
-      }
-      this.size = this.size + 1;
-    }
-    // ---------------------
-    // Method 9: InsertAfter
-    // ---------------------
-    InsertAfter(afterWho, data) {
-      // Return the iNod created with the entity+data inside it.
-      const toBeInserted = new MyNode(data);
-      let ret = null;
-      if (afterWho === null) {
-        toBeInserted.SetPrev(null);
-        toBeInserted.SetNext(this.first);
-        this.first.SetPrev(toBeInserted);
-        this.first = toBeInserted;
-        ret = toBeInserted;
-      } else {
-        toBeInserted.SetNext(afterWho.GetNext());
-        toBeInserted.SetPrev(afterWho);
-        afterWho.SetNext(toBeInserted);
-        if (toBeInserted.GetNext() === null) {
-          this.last = toBeInserted;
-        } else {
-          toBeInserted.GetNext().SetPrev(toBeInserted);
-          ret = toBeInserted;
-        }
-      }
-      this.size = this.size + 1;
-      return ret;
-    }
-    // -----------------------
-    // Method 10: Remove known
-    // -----------------------
-    RemoveKnown(iNodRemoved) {
-      // Check if it's the first node:
-      if (iNodRemoved.GetPrev() === null) {
-        // Yes! this.first is moved 1 up.
-        this.first = this.first.GetNext();
-        // Check if size>1:
-        if (this.first === null) {
-          // No! size now equals to 1. Therefore...
-          this.last = null;
-        } else {
-          this.first.SetPrev(null);
-        }
-      } else {
-        // No! it's not the first.
-        const prev = iNodRemoved.GetPrev();
-        const next = iNodRemoved.GetNext();
-        prev.SetNext(next);
-        // Check if it's the last:
-        if (next === null) {
-          // Yes! last need to move 1 before.
-          this.last = prev;
-        } else {
-          // No! we can set prev.
-          next.SetPrev(prev);
-        }
-      }
-      this.size = this.size - 1;
-    }
-    // -------------------------
-    // Method 11: Remove Unknown
-    // -------------------------
-    RemoveUnknown(data) {
-      // Note 1: Assumes an iNod with data exists. Therefore, a delete
-      // action is guaranteed.
-      // Check if it's the first node:
-      const ret = null;
-      if (this.first.GetEntity().data === data) {
-        // this.first pointer is moved 1 up:
-        this.first = this.first.GetNext();
-        // Check if size>1:
-        if (this.first === null) {
-          // No! size now equals to 1. Update this.last:
-          this.last = null;
-        } else {
-          // Yes! can setPrev
-          this.first.SetPrev(null);
-        }
-      } else {
-        // No! it's not the first. We need to find it:
-        let iNodRemoved = this.first.GetNext();
-        for (let i = 1; i < this.size; i++) {
-          // Is this the one?
-          if (iNodRemoved.GetEntity().data === data) {
-            // Yes!
-            const prev = iNodRemoved.GetPrev();
-            const next = iNodRemoved.GetNext();
-            prev.SetNext(next);
-            // Check if it's the last:
-            if (next === null) {
-              // Yes! last need to move 1 before.
-              this.last = prev;
-            } else {
-              // No! we can set prev.
-              next.SetPrev(prev);
-            }
-            break;
-          }
-          iNodRemoved = iNodRemoved.GetNext();
-        }
-      }
-      this.size = this.size - 1;
-      return ret;
-    }
-    // ------------------------------
-    // Method 12: Concatenate 2 Lists
-    // ------------------------------
-    ConnectHead2Tail(lst) {
-      this.last.SetNext(lst.first);
-      lst.first.SetPrev(this.last);
-      this.SetLast(lst.last);
-    }
-    // -------------------
-    // Method 13: Contains
-    // -------------------
-    Contains(data) {
-      let iNod = this.first;
-      let flag = false;
-      for (let i = 0; i < this.size; i++) {
-        if (iNod.GetEntity().data === data) {
-          flag = true;
-          break;
-        }
-        iNod = iNod.GetNext();
-      }
-      return flag;
-    }
-    // -------------------
-    // Method 14: Contains
-    // -------------------
-    ContainsAt(value, j) {
-      let iNod = this.first;
-      let flag = false;
-      for (let i = 0; i < this.size; i++) {
-        if (iNod.GetEntity().GetArrValue(j) === value) {
-          flag = true;
-          break;
-        }
-        iNod = iNod.GetNext();
-      }
-      return flag;
-    }
-    // -------------------------
-    // Method 15: Insertion Sort
-    // -------------------------
-    InsertionSort() {
-      let iNod = this.first;
-      if (iNod !== null && iNod.GetNext() !== null) {
-        iNod = iNod.GetNext();
-        // Step 1: Sort n-1 elements.
-        while (iNod.GetNext() !== null) {
-          // A. Remember your place:
-          const continueFrom = iNod.GetNext();
-          // B. Disconnect iNod:
-          iNod.GetPrev().SetNext(iNod.GetNext());
-          iNod.GetNext().SetPrev(iNod.GetPrev());
-          // C. Check backwards
-          let jNod = iNod.GetPrev();
-          while (jNod !== null && iNod.GetEntity().data < jNod.GetEntity().data) {
-            jNod = jNod.GetPrev();
-          }
-          // D. if reached 0...
-          if (jNod === null) {
-            // Connect iNod to beginning
-            iNod.SetNext(this.first);
-            iNod.SetPrev(null);
-            this.first.SetPrev(iNod);
-            this.first = iNod;
-          } else {
-            // Connect iNod after jNod
-            iNod.SetNext(jNod.GetNext());
-            iNod.SetPrev(jNod);
-            jNod.GetNext().SetPrev(iNod);
-            jNod.SetNext(iNod);
-          }
-          iNod = continueFrom;
-        }
-        // Step 4: Check the last one.
-        iNod = this.last;
-        let jNod = iNod.GetPrev();
-        if (iNod.GetEntity().data < jNod.GetEntity().data) {
-          // Step 5: jNod is now new Last.
-          this.last = jNod;
-          this.last.SetNext(null);
-          // C. Check backwards
-          jNod = jNod.GetPrev();
-          while (jNod !== null && iNod.GetEntity().data < jNod.GetEntity().data) {
-            jNod = jNod.GetPrev();
-          }
-          // D. if reached 0...
-          if (jNod === null) {
-            // Connect iNod to beginning
-            iNod.SetNext(this.first);
-            iNod.SetPrev(null);
-            this.first.SetPrev(iNod);
-            this.first = iNod;
-          } else {
-            // Connect iNod after jNod
-            iNod.SetNext(jNod.GetNext());
-            iNod.SetPrev(jNod);
-            jNod.GetNext().SetPrev(iNod);
-            jNod.SetNext(iNod);
-          }
-        }
-      }
-    }
-    // ----------------------
-    // Method 16: Revert List
-    // ----------------------
-    ReverseMe() {
-      // Note: Nodes remain in their places! nextNode and prevNode
-      // pointers remain untouched! Only thing done here is the
-      // replacing of pointers on entities.
-      const howManySwitches = this.size / 2; // it does flooring anyway because int.
-      let st = this.first;
-      let ed = this.last;
-      for (let i = 0; i < howManySwitches; i++) {
-        const saver = st.GetEntity;
-        st.SetEntity(ed.GetEntity);
-        ed.SetEntity(saver);
-        st = st.nextNode;
-        ed = ed.prevNode;
-      }
-    }
-    // --------------------
-    // Method 17: To String
-    // --------------------
-    ToString() {
-      let str = '[';
-      let iNod = this.first;
-      while (iNod !== null) {
-        str = str + iNod.GetEntity().data;
-        if (iNod.GetNext() !== null) {
-          str = `${str},`;
-        }
-        iNod = iNod.GetNext();
-      }
-      str = `${str}]`;
-      return str;
-    }
-    // ----------------
-    // Method 18: Clone
-    // ----------------
-    Clone() {
-      const clonedList = new MyList();
-      let iNod = this.first;
-      for (let i = 0; i < this.size; i++) {
-        clonedList.Enque(iNod.GetEntity().Clone());
-        iNod = iNod.GetNext();
-      }
-      return clonedList;
-    }
-  }
-  const cannonBallArr = new MyList();
-  const fireworksArr = new MyList();
   class CannonBall {
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // ------- Class Variables ---------
-    // ------- Class Variables ---------
-    // No need I guess?
-
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // --------- Constructor -----------
-    // --------- Constructor -----------
     constructor(x, y, radius, color, R, theta, dr) {
       this.x = x;
       this.y = y;
@@ -571,7 +96,6 @@ export function engine(mainCanvas, mainSize) {
       this.R = R;
       this.theta = theta;
       this.dr = dr;
-      /* ---------------------*/
       this.drSum = 0;
       this.destReached = false;
       if (MathRand() < 0.4) {
@@ -630,7 +154,7 @@ export function engine(mainCanvas, mainSize) {
             g: 0,
             b: 55 + Math.floor(200 * MathRand()),
           };
-          fireworksArr.Enque(
+          fireworksArr.push(
             new Firework(
               this.x,
               this.y,
@@ -648,7 +172,7 @@ export function engine(mainCanvas, mainSize) {
             g: 0,
             b: 55 + Math.floor(200 * MathRand()),
           };
-          fireworksArr.Enque(
+          fireworksArr.push(
             new Firework(
               this.x,
               this.y,
@@ -666,7 +190,7 @@ export function engine(mainCanvas, mainSize) {
             g: 0,
             b: 55 + Math.floor(200 * MathRand()),
           };
-          fireworksArr.Enque(
+          fireworksArr.push(
             new Firework(
               this.x,
               this.y,
@@ -686,7 +210,7 @@ export function engine(mainCanvas, mainSize) {
         };
         for (let i = 0; i < numOfFireworks; i++) {
           // 8 stars
-          fireworksArr.Enque(
+          fireworksArr.push(
             new Firework(
               this.x,
               this.y,
@@ -706,7 +230,7 @@ export function engine(mainCanvas, mainSize) {
         };
         for (let i = 0; i < numOfFireworks; i++) {
           // 8 stars
-          fireworksArr.Enque(
+          fireworksArr.push(
             new Firework(
               this.x,
               this.y,
@@ -726,7 +250,7 @@ export function engine(mainCanvas, mainSize) {
             g: 55 + Math.floor(200 * MathRand()),
             b: 55 + Math.floor(200 * MathRand()),
           };
-          fireworksArr.Enque(
+          fireworksArr.push(
             new Firework(
               this.x,
               this.y,
@@ -742,18 +266,6 @@ export function engine(mainCanvas, mainSize) {
     }
   }
   class Firework {
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // 111111111111111111111111111111111
-    // ------- Class Variables ---------
-    // ------- Class Variables ---------
-    // No need I guess?
-
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // 222222222222222222222222222222222
-    // --------- Constructor -----------
-    // --------- Constructor -----------
     constructor(x, y, radius, color, theta, dr, sprayEffect) {
       this.x = x;
       this.y = y;
@@ -761,23 +273,10 @@ export function engine(mainCanvas, mainSize) {
       this.color = color;
       this.theta = theta;
       this.dr = dr;
-      /* ---------------------*/
       this.opacity = 1;
       this.sprayEffect = sprayEffect;
     }
 
-    // 333333333333333333333333333333333333333333333333333
-    // 333333333333333333333333333333333333333333333333333
-    // 333333333333333333333333333333333333333333333333333
-    // 333333333333333333333333333333333333333333333333333
-    // 333333333333333333333333333333333333333333333333333
-    // 333333333333333333333333333333333333333333333333333
-    // -----------------    Methods    -------------------
-    // -----------------    Methods    -------------------
-    // -----------------    Methods    -------------------
-    // -----------------------
-    // Method 1: Draw Firework
-    // -----------------------
     draw() {
       c.beginPath();
       c.arc(this.x, this.y, this.radius, 0, twoPie, false);
@@ -791,9 +290,7 @@ export function engine(mainCanvas, mainSize) {
       }
       c.closePath();
     }
-    // ----------------
-    // Method 2: Update
-    // ----------------
+
     update() {
       if (this.dr > 0.01) {
         // A: Move piece in the direction specified
@@ -814,19 +311,12 @@ export function engine(mainCanvas, mainSize) {
         this.y = this.y + 0.35;
         this.opacity = this.opacity * 0.84;
       }
-      // Step D: Draw it
+
       this.draw();
     }
   }
 
   // 333333333333333333333333333333333333333333333333333
-  // 333333333333333333333333333333333333333333333333333
-  // 333333333333333333333333333333333333333333333333333
-  // 333333333333333333333333333333333333333333333333333
-  // 333333333333333333333333333333333333333333333333333
-  // 333333333333333333333333333333333333333333333333333
-  // ------    Phase 3: Declaring Functions    ---------
-  // ------    Phase 3: Declaring Functions    ---------
   // ------    Phase 3: Declaring Functions    ---------
 
   function launchFirework(destX, destY) {
@@ -838,41 +328,18 @@ export function engine(mainCanvas, mainSize) {
     const diffY = destY - y;
     const R = Math.sqrt(diffX ** 2 + diffY ** 2);
     const theta = -Math.atan2(diffY, diffX) + twoPie / 4; //
-    cannonBallArr.Enque(new CannonBall(x, y, radius, color, R, theta, dr));
+    cannonBallArr.push(new CannonBall(x, y, radius, color, R, theta, dr));
   }
 
   // 444444444444444444444444444444444444444444444444444
-  // 444444444444444444444444444444444444444444444444444
-  // 444444444444444444444444444444444444444444444444444
-  // 444444444444444444444444444444444444444444444444444
-  // 444444444444444444444444444444444444444444444444444
-  // 444444444444444444444444444444444444444444444444444
-  // --------    Phase 4: Event Listeners    -----------
-  // --------    Phase 4: Event Listeners    -----------
   // --------    Phase 4: Event Listeners    -----------
 
   mainCanvas.addEventListener('click', (e) => {
-    launchFirework(e.x, e.y);
+    const { offsetX: positionX, offsetY: positionY } = e;
+    launchFirework(positionX, positionY);
   });
 
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // 555555555555555555555555555555555555555555555555555
-  // --------     Phase 5: Implementation     ----------
-  // --------     Phase 5: Implementation     ----------
-  // --------     Phase 5: Implementation     ----------
-
   // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // 666666666666666666666666666666666666666666666666666
-  // -----     Phase 6: Start Animation Loop     -------
-  // -----     Phase 6: Start Animation Loop     -------
   // -----     Phase 6: Start Animation Loop     -------
   function animate() {
     // c.globalCompositeOperation = "source-over";
@@ -883,25 +350,25 @@ export function engine(mainCanvas, mainSize) {
     c.fillRect(0, 0, width, height);
     // c.globalCompositeOperation = "lighter";
     // Step 2: Draw CannonBalls
-    let iNod = cannonBallArr.GetFirst();
-    while (iNod != null) {
-      if (iNod.GetEntity().destReached) {
-        cannonBallArr.RemoveKnown(iNod);
+
+    // Step 2: Draw Shooting Stars
+    for (let i = 0; i < cannonBallArr.length; i++) {
+      if (cannonBallArr[i].destReached) {
+        cannonBallArr.splice(i, 1);
+        i = i - 1;
       } else {
-        iNod.GetEntity().update();
+        cannonBallArr[i].update();
       }
-      iNod = iNod.GetNext();
     }
 
     // Step 3: Draw CannonBalls' Explosion into Fireworks
-    iNod = fireworksArr.GetFirst();
-    while (iNod != null) {
-      if (iNod.GetEntity().opacity <= 0.1) {
-        fireworksArr.RemoveKnown(iNod);
+    for (let i = 0; i < fireworksArr.length; i++) {
+      if (fireworksArr[i].opacity <= 0.1) {
+        fireworksArr.splice(i, 1);
+        i = i - 1;
       } else {
-        iNod.GetEntity().update();
+        fireworksArr[i].update();
       }
-      iNod = iNod.GetNext();
     }
 
     // Step 4: Random Spawn of CannonBalls
