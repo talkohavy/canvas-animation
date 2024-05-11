@@ -98,8 +98,8 @@ function randomGoldColorGenerator() {
   return colorPalette[index];
 }
 
-function randomTheta() {
-  return MathRand() * twoPie;
+function getRandomThetaInRadians() {
+  return Math.random() * twoPie;
 }
 
 function randomThetaBetweenDegs(minTheta, maxTheta) {
@@ -112,7 +112,7 @@ export {
   easeOut,
   easeOutBounce,
   generateRandomThetaBetween,
+  getRandomThetaInRadians,
   randomGoldColorGenerator,
-  randomTheta,
   randomThetaBetweenDegs,
 };

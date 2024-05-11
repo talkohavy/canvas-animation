@@ -1,129 +1,115 @@
-import {
-  MaxRadius,
-  decay,
-  gravity,
-  maxBoomPower,
-  midFieldRadius,
-  numOfPoles,
-  pushForce,
-  radiusDecay,
-  shadowBlur,
-  speedDecay,
-  twoPie,
-} from './constants';
-import {
-  randomGoldColorGenerator,
-  randomTheta,
-  // randomThetaBetweenDegs,
-  // generateRandomThetaBetween,
-  // degreesToRadians,
-  // easeOutBounce,
-  // easeOut,
-} from './helpers';
+import { MaxRadius, decay, gravity, maxBoomPower, radiusDecay, shadowBlur, speedDecay, twoPie } from './constants';
+import { drawCircle } from './drawCircle';
+import { getRandomThetaInRadians, randomGoldColorGenerator } from './helpers';
+
+function getAnimationSettings({ canvasWidth, canvasHeight }) {
+  return {
+    magicWands: {
+      emittedSparksPerFrame: canvasWidth > 600 ? 5 : 3,
+      accelerationDecayFactory: 0.985,
+      boostMode: {
+        minBoostPower: 8,
+        duration: 50,
+        emittedSparksPerFrameOnBoost: canvasWidth > 600 ? 15 : 13,
+      },
+    },
+    magicSparks: {
+      radiusDecayFactor: 0.98,
+      ttl: 70,
+      initialRadius: 2.5,
+    },
+    pole: {
+      radius: canvasWidth > 600 ? 50 : 30,
+      positions: [
+        { x: canvasWidth * 0.25, y: canvasHeight * 0.25 },
+        { x: canvasWidth * 0.75, y: canvasHeight * 0.25 },
+        { x: canvasWidth * 0.75, y: canvasHeight * 0.75 },
+        { x: canvasWidth * 0.25, y: canvasHeight * 0.75 },
+      ],
+    },
+  };
+}
 
 export function engine(mainCanvas, mainSize) {
-  // ----------------------------------
-  // Phase 1: Declare Global Parameters
-  // ----------------------------------
-  const c = mainCanvas.getContext('2d');
+  const ctx = mainCanvas.getContext('2d');
   mainCanvas.height = mainSize.height;
   mainCanvas.width = mainSize.width;
   const { width } = mainSize;
   const { height } = mainSize;
-  // Initialize variables:
-  const pullForce = width > 600 ? 0.0003 : 0.0005;
+
+  const maxPolePullForce = width > 600 ? 0.0003 : 0.0005;
   const numOfMagicSparks = width > 600 ? 5 : 3;
   const sparksBoost = width > 600 ? 15 : 13;
-  const bigFieldRadius = width > 600 ? 0.6 * width : width;
+  const minBoostPower = 5;
+  const boostPowerRange = 8;
+  const bigFieldRadius = width > 600 ? 0.5 * width : width;
   const poleRadius = width > 600 ? 50 : 30;
-  const megaBurstValue = width > 600 ? 0.5 : 0.15;
-  // fixed variables:
-  const MathRand = Math.random;
-  const MathAbs = Math.abs;
-  let ticker = 1;
-  let clicked;
-  let mouse = { x: 0, y: 0 };
-  const mainBallsArr = [];
-  const magicSparksArr = [];
-  const polesArr = [];
+  const slowMovementThreshold = width > 600 ? 1 : 0.15;
+  const minPullForceThreshold = 0.01;
+  const magicWandArr = [];
+  let magicSparksArr = [];
 
-  // ----------------------------------------------------------------------------------
-  // Phase 2: Declare Functions that use: [ objArr | width | mouse.pos | new Object() ]
-  // ----------------------------------------------------------------------------------
+  const animationSettings = getAnimationSettings({ canvasWidth: width, canvasHeight: height });
+
   const positions = [
     { x: width * 0.25, y: height * 0.25 },
     { x: width * 0.75, y: height * 0.25 },
     { x: width * 0.75, y: height * 0.75 },
     { x: width * 0.25, y: height * 0.75 },
   ];
-  // function nextPolePosition(ticker, prevStep) {
-  //   // if (ticker % 300 === 0) {
-  //   //   mouse.x = MathRand() * width;
-  //   //   mouse.y = MathRand() * height;
-  //   // }
-  //   // Step 1: find step
-  //   let curStep = -1;
-  //   if (ticker < 80) {
-  //     curStep = 0;
-  //   } else {
-  //     if (ticker < 200) {
-  //       curStep = 1;
-  //     } else {
-  //       if (ticker < 340) {
-  //         curStep = 2;
-  //       } else {
-  //         curStep = 3;
-  //       }
-  //     }
-  //   }
 
-  //   // Step 2: Did the step change? compare curStep to prevStep
-  //   if (curStep === prevStep) {
-  //     return curStep;
-  //   }
+  function createNewMagicSpark(props) {
+    const { ctx, animationSettings, x, y, isBoostMode } = props;
 
-  //   // Step 3: Yes! it has! make the change...
-  //   if (MathRand() < 0.65) {
-  //     mouse = positions[curStep];
-  //   }
-  //   return curStep;
-  // }
-
-  function createNewMagicSpark(x, y) {
-    const curTheta = randomTheta();
-    const curPower = 0.4 + MathRand() * 0.5;
-    const props = {
+    const thetaInRadians = getRandomThetaInRadians();
+    const direction = {
+      x: Math.cos(thetaInRadians),
+      y: Math.sin(thetaInRadians),
+    };
+    const percentageOfPower = isBoostMode ? Math.random() : 0.4 + Math.random() * 0.5;
+    const magicSparkProps = {
+      ctx,
+      animationSettings,
+      boundingBox: { width, height },
       x,
       y,
-      dx: maxBoomPower * curPower * Math.sin(curTheta),
-      dy: maxBoomPower * curPower * Math.cos(curTheta),
+      dy: percentageOfPower * maxBoomPower * direction.x,
+      dx: percentageOfPower * maxBoomPower * direction.y,
       color: randomGoldColorGenerator(),
+      shadowColor: isBoostMode ? 'red' : '#e3eaef',
       size: 1,
     };
-    magicSparksArr.push(new MagicSpark(props));
+
+    const magicSpark = new MagicSpark(magicSparkProps);
+
+    return magicSpark;
   }
 
-  function createNewMainBall({ x, y }) {
-    const props = { x, y, dx: 1, dy: -1 };
-    mainBallsArr.push(new MainBall(props));
+  function createNewMagicWand({ ctx, animationSettings, boundingBox, x, y }) {
+    const magicWandProps = { ctx, animationSettings, boundingBox, x, y, dx: 1, dy: -1 };
+    const magicWand = new MainBall(magicWandProps);
+
+    return magicWand;
   }
 
-  function createNewPole({ x, y, step }) {
-    mouse = { x, y };
-    polesArr.push(new Pole(x, y, step));
+  function createNewPole({ ctx, animationSettings, x, y, step }) {
+    const poleProps = { ctx, animationSettings, x, y, step };
+    const pole = new Pole(poleProps);
+
+    return pole;
   }
 
-  // ----------------------------
-  // Phase 3: Declare all Objects
-  // ----------------------------
   class MagicSpark {
-    // Constructor:
-    constructor({ x, y, dx, dy, color, size }) {
+    constructor({ ctx, animationSettings, boundingBox, x, y, dx, dy, color, shadowColor, size }) {
+      this.ctx = ctx;
+      this.animationSettings = animationSettings;
+      this.boundingBox = boundingBox;
       this.x = x;
       this.y = y;
       this.dx = dx;
       this.dy = dy;
       this.color = color;
+      this.shadowColor = shadowColor;
       this.size = size;
       this.normX = 0;
       this.normY = 0;
@@ -133,83 +119,66 @@ export function engine(mainCanvas, mainSize) {
       this.radius = MaxRadius;
     }
 
-    // ------------
-    // all methods:
-    // ------------
-
-    // Method 1: Draw MagicSpark
     draw() {
-      c.fillStyle = this.color;
-      c.beginPath();
-      c.arc(this.x, this.y, this.radius, 0, twoPie, true);
-      c.shadowColor = '#e3eaef';
-      c.shadowBlur = shadowBlur;
-      c.closePath();
-      c.fill();
-      c.strokeStyle = 'black';
-      c.restore();
+      drawCircle({
+        ctx,
+        x: this.x,
+        y: this.y,
+        radius: this.radius,
+        color: this.color,
+        shadowColor: this.shadowColor,
+        shadowBlur,
+      });
     }
 
-    // Method 2: Update
     update() {
-      // Step 1: Calc Distance from mouse
-      const diffX = this.x - mouse.x;
-      const diffY = this.y - mouse.y;
-      const distance = Math.sqrt(diffX * diffX + diffY * diffY) || 0.001;
+      this.reduceTimeToLive();
 
-      // Step 2: Get normalized direction values
-      this.normX = diffX / distance;
-      this.normY = diffY / distance;
-
-      // Step 3: If a click occurred
-      let curForce = -1;
-      if (distance < midFieldRadius) {
-        curForce = pushForce * (1 - distance / midFieldRadius);
-        this.dx = this.dx + (this.normX * curForce + 0.5 - MathRand());
-        this.dy = this.dy + (this.normY * curForce + 0.5 - MathRand());
+      if (this.isHittingWall()) {
+        this.reverseXDirection();
       }
-      // Step 4: Reduce Time To Live
-      this.curTtl = this.curTtl - 1;
-      this.opacity = this.opacity - 1 / this.curTtl; // 0.01
 
-      // Step 5: decrease radius
-      this.radius = this.radius * radiusDecay;
-      // let progress = (this.maxTtl - this.curTtl) / this.maxTtl;
-      // this.radius = MaxRadius * (1 - easeOut(progress));
+      if (this.isHittingFloorOrCeiling()) {
+        this.reverseYDirection();
+      }
 
-      // Step 6: Decay acceleration with each iteration
       this.dx = this.dx * speedDecay;
       this.dy = this.dy * speedDecay + gravity;
 
-      // Step 7: Update particle's position
       this.x = this.x + this.dx;
       this.y = this.y + this.dy;
 
-      // Step 8: Collision Detection for Walls Floor and Ceiling
-      // -- Walls:
-      if (this.x > width) {
-        this.x = width;
-        this.dx = -1 * this.dx;
-      } else if (0 > this.x) {
-        this.x = 0;
-        this.dx = -1 * this.dx;
-      }
-      // -- Floor and Ceiling:
-      if (this.y > height) {
-        this.y = height;
-        this.dy = -1 * this.dy;
-      } else if (0 > this.y) {
-        this.y = 0;
-        this.dy = -1 * this.dy;
-      }
-      // Step 9: Draw object
       this.draw();
+    }
+
+    isHittingFloorOrCeiling() {
+      return this.y + this.dy > this.boundingBox.height || this.y < 0;
+    }
+
+    isHittingWall() {
+      return this.x + this.dx > this.boundingBox.width || this.x <= 0;
+    }
+
+    reverseXDirection() {
+      this.dx = -1 * this.dx;
+    }
+
+    reverseYDirection() {
+      this.dy = -1 * this.dy;
+    }
+
+    reduceTimeToLive() {
+      this.curTtl = this.curTtl - 1;
+      this.radius = this.radius * radiusDecay;
+      this.opacity = this.opacity - 1 / this.curTtl;
     }
   }
 
   class MainBall {
-    // Constructor:
-    constructor({ x, y, dx, dy }) {
+    constructor({ ctx, boundingBox, animationSettings, x, y, dx, dy }) {
+      this.ctx = ctx;
+      this.animationSettings = animationSettings;
+      this.boundingBox = boundingBox;
       this.x = x;
       this.y = y;
       this.dx = dx;
@@ -217,260 +186,210 @@ export function engine(mainCanvas, mainSize) {
       this.normX = 0;
       this.normY = 0;
       this.timer = 0;
-      this.boostMode = false;
+      this.isBoostMode = false;
     }
 
-    // all methods:
+    update(props) {
+      const { polePosition } = props;
 
-    // Method 1: Draw MainBall
-    // draw() {
-    //   c.fillStyle = this.color;
-    //   c.beginPath();
-    //   c.arc(this.x, this.y, MaxRadius * this.normX, 0, twoPie, true);
-    //   /* c.shadowColor = "white";
-    //         c.shadowBlur = 5; */
-    //   c.closePath();
-    //   c.fill();
-    //   // c.strokeStyle = "green"; //
-    //   // c.stroke()
-    // }
+      if (this.isBoostMode) this.boostModeCountDown();
 
-    // Method 2: Update
-    update() {
-      if (this.boostMode) {
-        this.timer--;
-      }
-      if (this.timer === 0) {
-        this.boostMode = false;
-        this.timer--;
+      let currentPullForce = 0;
+      if (polePosition) {
+        const { distance, poleDirection } = this.calculateDirectionAndDistanceFromPole(polePosition);
+
+        currentPullForce = this.calculatePullForce(distance);
+
+        if (distance < bigFieldRadius) this.moveTowardsPole({ pullForce: currentPullForce, poleDirection });
       }
 
-      // Step 1: Calc Distance from mouse
-      const diffX = this.x - mouse.x;
-      const diffY = this.y - mouse.y;
-      let distance = Math.sqrt(diffX * diffX + diffY * diffY) || 0.001;
-
-      // Step 2: Get normalized direction values
-      this.normX = diffX / distance;
-      this.normY = diffY / distance;
-
-      // Step 3: If a click occurred
-      let curForce = -1;
-      if (clicked && distance < midFieldRadius) {
-        curForce = pushForce * (1 - distance / midFieldRadius);
-        this.dx = this.dx + (this.normX * curForce + 0.5 - MathRand());
-        this.dy = this.dy + (this.normY * curForce + 0.5 - MathRand());
-      }
-
-      // Step 4: Start attracting particles if they are inside magnetic field
-      if (distance < bigFieldRadius) {
-        curForce = pullForce * (1 - distance / bigFieldRadius) * width;
-        this.dx = this.dx - this.normX * curForce;
-        this.dy = this.dy - this.normY * curForce;
-      }
-
-      // Step 5: Decay acceleration with each iteration
       this.dx = this.dx * decay;
       this.dy = this.dy * decay;
 
-      // Step 6: Control Particle size based on distance
-      this.normX = MathAbs(this.dx);
-      this.normY = MathAbs(this.dy);
-      distance = 0.5 * (this.normX + this.normY);
+      if (this.isMovingSlow(currentPullForce)) this.activateMegaBoost();
 
-      // Step 7: Always keep them moving in random directions
-      if (this.normX < megaBurstValue && this.normY < megaBurstValue) {
-        this.dx = this.dx + 5 + 8 * MathRand();
-        this.dy = this.dy + 5 + 8 * MathRand();
-        this.boostMode = true;
-        this.timer = 50;
+      if (this.isHittingFloorOrCeiling()) {
+        this.reverseYDirection();
       }
 
-      // Step 8: Limit Particle's MinMax size
-      this.normX = 0.45 * distance;
-      this.normX = Math.max(Math.min(this.normX, 4), 0.4);
+      if (this.isHittingWall()) {
+        this.reverseXDirection();
+      }
 
-      // Step 9: Update particle's position
+      this.moveToNextPosition();
+
+      return this.emitMagicSparks();
+    }
+
+    isHittingFloorOrCeiling() {
+      return this.y + this.dy > this.boundingBox.height || this.y < 0;
+    }
+
+    isHittingWall() {
+      return this.x + this.dx > this.boundingBox.width || this.x <= 0;
+    }
+
+    reverseXDirection() {
+      this.dx = -1 * this.dx;
+    }
+
+    reverseYDirection() {
+      this.dy = -1 * this.dy;
+    }
+
+    moveToNextPosition() {
       this.x = this.x + this.dx;
       this.y = this.y + this.dy;
+    }
 
-      // Step 10: Collision Detection for Walls Floor and Ceiling
-      // -- Walls:
-      if (this.x > width) {
-        this.x = width;
-        this.dx = -1 * this.dx;
-      } else if (0 > this.x) {
-        this.x = 0;
-        this.dx = -1 * this.dx;
+    calculateDirectionAndDistanceFromPole(polePosition) {
+      const diffX = this.x - polePosition.x;
+      const diffY = this.y - polePosition.y;
+      const distance = Math.sqrt(diffX * diffX + diffY * diffY) || 0.001;
+
+      const normX = diffX / distance;
+      const normY = diffY / distance;
+
+      return { distance, poleDirection: { x: normX, y: normY } };
+    }
+
+    boostModeCountDown() {
+      this.timer--;
+
+      if (this.timer === 0) this.setBoostModeOff();
+    }
+
+    setBoostModeOn() {
+      this.isBoostMode = true;
+    }
+
+    setBoostModeOff() {
+      this.isBoostMode = false;
+    }
+
+    moveTowardsPole({ pullForce, poleDirection }) {
+      this.dx = this.dx - poleDirection.x * pullForce;
+      this.dy = this.dy - poleDirection.y * pullForce;
+    }
+
+    isMovingSlow(pullForce) {
+      return pullForce < minPullForceThreshold && Math.abs(this.dx) + Math.abs(this.dy) < slowMovementThreshold;
+    }
+
+    calculatePullForce(distance) {
+      return maxPolePullForce * (1 - distance / bigFieldRadius) * width;
+    }
+
+    activateMegaBoost() {
+      const signIndicatorX = Math.random() < 0.5 ? 1 : -1;
+      const signIndicatorY = Math.random() < 0.5 ? 1 : -1;
+      this.dx = this.dx + signIndicatorX * (minBoostPower + boostPowerRange * Math.random());
+      this.dy = this.dy + signIndicatorY * (minBoostPower + boostPowerRange * Math.random());
+      this.isBoostMode = true;
+      this.timer = 50;
+    }
+
+    emitMagicSparks() {
+      const magicSparksArr = [];
+      for (let i = 0; i < numOfMagicSparks + (this.isBoostMode ? sparksBoost : 0); i++) {
+        const magicSparkProps = {
+          ctx: this.ctx,
+          animationSettings: this.animationSettings,
+          x: this.x,
+          y: this.y,
+          isBoostMode: this.isBoostMode,
+        };
+        const magicSpark = createNewMagicSpark(magicSparkProps);
+        magicSparksArr.push(magicSpark);
       }
-      // -- Floor and Ceiling:
-      if (this.y > height) {
-        this.y = height;
-        this.dy = -1 * this.dy;
-      } else if (0 > this.y) {
-        this.y = 0;
-        this.dy = -1 * this.dy;
-      }
-      // Step 11: Random Spawn of MagicSparks around mouse
-      for (let i = 0; i < numOfMagicSparks + (this.boostMode ? sparksBoost : 0); i++) {
-        createNewMagicSpark(this.x, this.y);
-      }
-      // this.draw();
+
+      return magicSparksArr;
     }
   }
 
   class Pole {
-    // Constructor:
-    constructor(x, y, step) {
+    constructor({ ctx, animationSettings, x, y, step }) {
+      this.ctx = ctx;
+      this.animationSettings = animationSettings;
       this.position = { x, y };
       this.step = step;
       this.radius = poleRadius;
     }
 
-    // all methods:
-
-    // Method 1: draw Pole
     draw() {
-      c.fillStyle = 'red';
-      c.beginPath();
-      c.arc(this.position.x, this.position.y, this.radius, 0, twoPie, true);
-      c.shadowColor = '#e3eaef';
-      c.shadowBlur = shadowBlur;
-      c.closePath();
-      c.fill();
-      c.strokeStyle = 'black';
-      c.restore();
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(this.position.x, this.position.y, this.radius, 0, twoPie, true);
+      ctx.shadowColor = '#e3eaef';
+      ctx.shadowBlur = shadowBlur;
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'black';
+      ctx.restore();
     }
 
-    // Method 2: Update
-    update() {
+    update(props) {
+      const { mainBall } = props;
+
       // Step 1: Calc Distance from MainBall
-      const diffX = this.position.x - mainBallsArr[0]?.x;
-      const diffY = this.position.y - mainBallsArr[0]?.y;
-      const distance = Math.sqrt(diffX * diffX + diffY * diffY) || 0.001;
+      if (mainBall) {
+        const diffX = this.position.x - mainBall.x;
+        const diffY = this.position.y - mainBall.y;
+        const distance = Math.sqrt(diffX * diffX + diffY * diffY) || 0.001;
 
-      // Step 2: Get normalized direction values
-      this.normX = diffX / distance;
-      this.normY = diffY / distance;
-
-      // Step 4: Start attracting particles if they are inside magnetic field
-      if (distance < this.radius) {
-        this.goToNextPosition();
+        // Step 2: Switch position if too close
+        if (distance < this.radius) this.goToNextPosition();
       }
-      // this.draw();
+
+      this.draw();
     }
 
     // Method 3: go To Next Position
     goToNextPosition() {
       this.step = (this.step + 1) % 4;
       this.position = positions[this.step];
-      mouse = positions[this.step];
     }
   }
-
-  // ------------------------
-  // Phase 4: Event Listeners
-  // ------------------------
-
-  // Event 1: Mouse Move
-  // window.addEventListener('mousemove', (e) => {
-  //   mouse.x = e.clientX;
-  //   mouse.y = e.clientY - (e.clientY - e.offsetY);
-  // });
-
-  // Event 2: Mouse Down
-  window.addEventListener('mousedown', () => {
-    clicked = !0;
-  });
-
-  // Event 3: Mouse Up
-  window.addEventListener('mouseup', () => {
-    clicked = !1;
-  });
-
-  // Event 4: Touch Move
-  // window.addEventListener('touchmove', (e) => {
-  //   // If there's exactly one finger inside this element
-  //   if (e.targetTouches.length === 1) {
-  //     const touch = e.targetTouches[0];
-  //     // Place element where the finger is
-  //     // Step 1: Get mouse position.
-  //     mouse.x = touch.pageX;
-  //     mouse.y = touch.pageY - 80;
-  //   }
-  // });
-
-  // Event 5: Touch Start
-  window.addEventListener('touchstart', (e) => {
-    if (e.touches.length > 1) {
-      clicked = !0;
-    }
-  });
-
-  // Event 6: Touch End
-  window.addEventListener('touchend', (e) => {
-    if (e.touches.length <= 1) {
-      clicked = !1;
-    }
-  });
 
   // -----------------------
   // Phase 5: Implementation
   // -----------------------
-  const initialPos = { x: width * 0.05, y: height * 0.75 };
 
-  for (let i = 0; i < numOfPoles; i++) createNewMainBall(initialPos);
+  const magicWand = createNewMagicWand({
+    ctx,
+    animationSettings,
+    boundingBox: { width, height },
+    x: width * 0.05,
+    y: height * 0.75,
+  });
+  magicWandArr.push(magicWand);
 
-  createNewPole({ x: width * 0.25, y: height * 0.25, step: 0 });
+  const pole = createNewPole({ ctx, animationSettings, x: width * 0.25, y: height * 0.25, step: 0 });
 
   // -----------------------------
   // Phase 6: Start Animation Loop
   // -----------------------------
   function animate() {
     // Step 1: Clear Drawing Board / Draw Background
-    // c.globalCompositeOperation = "source-over";
-    c.fillStyle = 'rgba(0,8,12,1)'; // black
-    c.fillRect(0, 0, width, height);
-    // c.globalCompositeOperation = "lighter";
+    // ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = 'rgba(0,8,12,1)'; // black
+    ctx.fillRect(0, 0, width, height);
 
-    // Step 2: Run Poles
-    for (let i = 0; i < polesArr.length; i++) polesArr[i].update();
+    // Step 2: Run Pole
+    pole.update({ mainBall: magicWandArr[0] });
 
-    // Step 2: Run Main Ball
-    for (let i = 0; i < mainBallsArr.length; i++) {
-      // if (mainBallsArr[i].curTtl === 0) {
-      //   mainBallsArr.splice(i, 1);
-      //   i = i - 1;
-      // } else {
-      mainBallsArr[i].update();
-      // }
+    // Step 3: Run Main Ball
+    for (const magicWand of magicWandArr) {
+      const emittedSparks = magicWand.update({ polePosition: pole.position });
+      magicSparksArr.push(...emittedSparks);
     }
 
-    // Step 3: Run MagicSparks
-    for (let i = 0; i < magicSparksArr.length; i++) {
-      if (magicSparksArr[i].curTtl === 0) {
-        magicSparksArr.splice(i, 1);
-        i = i - 1;
-      } else {
-        magicSparksArr[i].update();
-      }
+    // Step 4: Run MagicSparks
+    magicSparksArr = magicSparksArr.filter((magicSpark) => magicSpark.curTtl > 0);
+    for (const magicSpark of magicSparksArr) {
+      magicSpark.update();
     }
 
-    // Step 4: random mouse pole
-    ticker = (ticker + 1) % 550;
-    // step = nextPolePosition(ticker, step);
-
-    // c.fillStyle = 'red';
-    // c.beginPath();
-    // c.arc(mouse.x, mouse.y, 10, 0, twoPie, true);
-    // c.shadowColor = '#e3eaef';
-    // c.shadowBlur = shadowBlur;
-    // c.closePath();
-    // c.fill();
-    // c.strokeStyle = 'black';
-    // c.restore();
-
-    // Last Step: Loop over & over
     requestAnimationFrame(animate);
   }
   animate();
