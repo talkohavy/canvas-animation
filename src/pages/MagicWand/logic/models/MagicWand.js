@@ -9,9 +9,7 @@ class MagicWand {
     this.y = y;
     this.dx = dx;
     this.dy = dy;
-    this.normX = 0;
-    this.normY = 0;
-    this.timer = 0;
+    this.boostModeTimer = animationSettings.magicWands.boostMode.duration;
     this.isBoostMode = false;
   }
 
@@ -83,9 +81,9 @@ class MagicWand {
   }
 
   boostModeCountDown() {
-    this.timer--;
+    this.boostModeTimer--;
 
-    if (this.timer === 0) this.setBoostModeOff();
+    if (this.boostModeTimer === 0) this.setBoostModeOff();
   }
 
   setBoostModeOn() {
@@ -124,7 +122,7 @@ class MagicWand {
     this.dx = this.dx + signIndicatorX * (boostPowerBase + boostPowerRange * Math.random());
     this.dy = this.dy + signIndicatorY * (boostPowerBase + boostPowerRange * Math.random());
     this.isBoostMode = true;
-    this.timer = 50;
+    this.boostModeTimer = this.animationSettings.magicWands.boostMode.duration;
   }
 
   emitMagicSparks() {

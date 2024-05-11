@@ -1,4 +1,4 @@
-import { getRandomGoldColor, getRandomThetaInRadians } from '../helpers';
+import { getRandomSparkColor, getRandomThetaInRadians } from '../helpers';
 import { drawCircle } from '../helpers/drawCircle';
 
 class MagicSpark {
@@ -91,27 +91,30 @@ class MagicSpark {
 function createNewMagicSpark(props) {
   const { ctx, animationSettings, boundingBox, x, y, isBoostMode } = props;
 
-  const { shadowColor, shadowColorOnBoost } = animationSettings.magicSparks;
+  let magicSparksProps = animationSettings.magicSparks;
+  if (isBoostMode) {
+    magicSparksProps = { ...magicSparksProps, ...animationSettings.magicSparks.boostMode };
+  }
 
-  const maxBoostPower = isBoostMode ? 0.8 : 1.2;
+  const { maxBoostPower, shadowColor } = magicSparksProps;
 
-  const thetaInRadians = getRandomThetaInRadians();
-  const direction = {
-    x: Math.cos(thetaInRadians),
-    y: Math.sin(thetaInRadians),
-  };
   const percentageOfPower = isBoostMode ? Math.random() : 0.4 + Math.random() * 0.5;
+  const thetaInRadians = getRandomThetaInRadians();
+  const direction = { x: Math.cos(thetaInRadians), y: Math.sin(thetaInRadians) };
+  const color = getRandomSparkColor({ palette: isBoostMode ? 'fire' : 'magic' });
+  const dx = percentageOfPower * maxBoostPower * direction.x;
+  const dy = percentageOfPower * maxBoostPower * direction.y;
+
   const magicSparkProps = {
     ctx,
     animationSettings,
     boundingBox,
     x,
     y,
-    dy: percentageOfPower * maxBoostPower * direction.x,
-    dx: percentageOfPower * maxBoostPower * direction.y,
-    color: getRandomGoldColor(),
-    shadowColor: isBoostMode ? shadowColorOnBoost : shadowColor,
-    size: 1,
+    dx,
+    dy,
+    color,
+    shadowColor,
   };
 
   const magicSpark = new MagicSpark(magicSparkProps);

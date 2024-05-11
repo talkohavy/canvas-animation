@@ -1,3 +1,3 @@
 export { drawCircle } from './drawCircle';
-export { getRandomGoldColor } from './getRandomGoldColor';
+export { getRandomSparkColor } from './getRandomSparkColor';
 export { getRandomThetaInRadians } from './getRandomThetaInRadians';

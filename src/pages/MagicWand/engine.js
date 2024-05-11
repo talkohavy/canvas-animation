@@ -12,18 +12,21 @@ function getAnimationSettings({ canvasWidth, canvasHeight }) {
         minPullForceThreshold: 0.01,
         boostPowerBase: 8,
         boostPowerRange: 8,
-        duration: 50,
+        duration: 90,
         sparksPerFrame: isDesktopScreen ? 15 : 13,
       },
     },
     magicSparks: {
+      maxBoostPower: 1,
       gravity: 0.03,
       shadowColor: '#e3eaef',
-      shadowColorOnBoost: 'red',
       shadowBlur: 6,
       radiusDecay: 0.98,
       ttl: 70,
       initialRadius: 2.5,
+      boostMode: {
+        shadowColor: 'red',
+      },
     },
     poles: {
       maxPolePullForce: isDesktopScreen ? 0.0003 : 0.0005,
