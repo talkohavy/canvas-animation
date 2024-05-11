@@ -23,8 +23,8 @@ function getAnimationSettings(props) {
         shadowBlur: 20,
       },
       gravity: 0.1,
+      elasticity: 0.7,
       shrinkFactor: 3,
-      elasticity: 1,
       explode: {
         miniStarsCount: 16,
       },

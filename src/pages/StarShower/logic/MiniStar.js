@@ -30,16 +30,16 @@ class MiniStar {
   }
 
   update() {
+    this.freeFall();
+
     if (this.isHittingFloor()) {
       this.reverseYDirection();
-    } else {
-      this.freeFall();
     }
-
-    this.moveToNextPosition();
 
     this.timeToLive = this.timeToLive - 1;
     this.opacity = this.opacity - 1 / this.timeToLive; // 0.01
+
+    this.moveToNextPosition();
 
     this.draw();
   }

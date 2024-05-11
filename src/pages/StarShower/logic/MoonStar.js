@@ -29,12 +29,12 @@ class MoonStar {
   }
 
   update() {
+    this.freeFall();
+
     if (this.isHittingFloor()) {
       this.reverseYDirection();
       this.shrink();
       this.explode();
-    } else {
-      this.freeFall();
     }
 
     if (this.isHittingWall()) {
