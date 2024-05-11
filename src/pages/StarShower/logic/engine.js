@@ -4,18 +4,14 @@ import { MiniStar } from './MiniStar';
 import { createRandomMoonStar } from './MoonStar';
 
 export function engine(mainCanvas, bgCanvas, mainSize) {
-  // ---------------
   // Canvas Layer 1:
-  // ---------------
   const ctx = mainCanvas.getContext('2d');
   mainCanvas.height = mainSize.height;
   mainCanvas.width = mainSize.width;
   const { width } = mainSize;
   const { height } = mainSize;
 
-  // ---------------
   // Canvas Layer 2:
-  // ---------------
   const bgCtx = bgCanvas.getContext('2d');
   bgCanvas.height = mainSize.height;
   bgCanvas.width = mainSize.width;

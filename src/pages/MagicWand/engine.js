@@ -134,6 +134,10 @@ export function engine(mainCanvas, mainSize) {
     update() {
       this.reduceTimeToLive();
 
+      this.freeFall();
+
+      this.speedDecay();
+
       if (this.isHittingWall()) {
         this.reverseXDirection();
       }
@@ -142,13 +146,18 @@ export function engine(mainCanvas, mainSize) {
         this.reverseYDirection();
       }
 
-      this.dx = this.dx * speedDecay;
-      this.dy = this.dy * speedDecay + gravity;
-
-      this.x = this.x + this.dx;
-      this.y = this.y + this.dy;
+      this.moveToNextPosition();
 
       this.draw();
+    }
+
+    freeFall() {
+      this.dy = this.dy + gravity;
+    }
+
+    speedDecay() {
+      this.dx = this.dx * speedDecay;
+      this.dy = this.dy * speedDecay;
     }
 
     isHittingFloorOrCeiling() {
@@ -165,6 +174,11 @@ export function engine(mainCanvas, mainSize) {
 
     reverseYDirection() {
       this.dy = -1 * this.dy;
+    }
+
+    moveToNextPosition() {
+      this.x = this.x + this.dx;
+      this.y = this.y + this.dy;
     }
 
     reduceTimeToLive() {
