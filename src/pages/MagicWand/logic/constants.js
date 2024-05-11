@@ -1,0 +1,35 @@
+const colorPalette = [
+  '#ffd700',
+  '#f5f5dc',
+  '#fafad2',
+  '#eee8aa',
+  '#f0e68c',
+  '#daa520',
+  '#b8860b',
+  '#faf0be',
+  '#eae0c8',
+  '#eae0c8',
+  '#fae7b5',
+  '#f5deb3',
+  '#f3e5ab',
+  '#f3e5ab',
+  '#f0dc82',
+  '#f8de7e',
+  '#eedc82',
+  '#e5aa70',
+  '#e9d66b',
+  '#ffdb58',
+  '#e4d96f',
+  '#e1a95f',
+  '#ffcc33',
+  '#ecd540',
+  '#f4c430',
+  '#ffcc00',
+  '#ffd300',
+  '#ffdf00',
+  '#fcc200',
+];
+
+const TWO_PIE = 2 * Math.PI;
+
+export { TWO_PIE, colorPalette };
